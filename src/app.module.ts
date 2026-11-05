@@ -4,11 +4,10 @@ import { ConfigModule } from '@nestjs/config';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
 import { PostgreSqlDriver } from '@mikro-orm/postgresql';
 import { Migrator } from '@mikro-orm/migrations';
-
 import { AppController } from './app.controller.js';
 import { AppService } from './app.service.js';
-
 import { Wallet } from './wallets/entities/wallet.entity.js';
+import { WalletsModule } from './wallets/wallets.module.js';
 
 @Module({
   imports: [
@@ -35,6 +34,7 @@ import { Wallet } from './wallets/entities/wallet.entity.js';
         emit: 'ts',
       },
     }),
+    WalletsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
