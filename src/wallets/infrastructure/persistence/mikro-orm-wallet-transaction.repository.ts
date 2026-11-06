@@ -1,3 +1,4 @@
+
 import { ConflictException, Injectable } from '@nestjs/common';
 import { LockMode } from '@mikro-orm/core';
 import { EntityManager } from '@mikro-orm/postgresql';
@@ -9,7 +10,7 @@ import { Wallet as WalletEntity } from '../../entities/wallet.entity.js';
 import { LedgerEntry } from '../../entities/ledger-entry.entity.js';
 import { IdempotencyRecord } from '../../entities/idempotency-record.entity.js';
 import type {
-  CreditWalletResult,
+  WalletTransactionResult,
   WalletTransactionRepository,
 } from '../../application/ports/wallet-transaction.repository.js';
 
@@ -25,7 +26,42 @@ export class MikroOrmWalletTransactionRepository
     transactionId: string,
     idempotencyKey: string,
     requestHash: string,
-  ): Promise<CreditWalletResult> {
+  ): Promise<WalletTransactionResult> {
+    return this.executeTransaction(
+      walletId,
+      amount,
+      transactionId,
+      idempotencyKey,
+      requestHash,
+      'CREDIT',
+    );
+  }
+
+  async debit(
+    walletId: string,
+    amount: Money,
+    transactionId: string,
+    idempotencyKey: string,
+    requestHash: string,
+  ): Promise<WalletTransactionResult> {
+    return this.executeTransaction(
+      walletId,
+      amount,
+      transactionId,
+      idempotencyKey,
+      requestHash,
+      'DEBIT',
+    );
+  }
+
+  private async executeTransaction(
+    walletId: string,
+    amount: Money,
+    transactionId: string,
+    idempotencyKey: string,
+    requestHash: string,
+    type: 'CREDIT' | 'DEBIT',
+  ): Promise<WalletTransactionResult> {
     return this.em.transactional(async (tx) => {
       const entity = await tx.findOne(
         WalletEntity,
@@ -37,7 +73,6 @@ export class MikroOrmWalletTransactionRepository
         return { status: 'not_found' };
       }
 
-      // Tenta reservar a chave dentro da mesma transação.
       const inserted = await tx.getConnection().execute(
         `INSERT INTO idempotency_records
           (id, key, request_hash, response, created_at)
@@ -47,7 +82,6 @@ export class MikroOrmWalletTransactionRepository
         [randomUUID(), idempotencyKey, requestHash, null, new Date()],
       );
 
-      // A chave já existe: verifica se a requisição é idêntica.
       if (inserted.length === 0) {
         const existing = await tx.findOne(IdempotencyRecord, {
           key: idempotencyKey,
@@ -70,7 +104,7 @@ export class MikroOrmWalletTransactionRepository
         return {
           status: 'completed',
           replayed: true,
-          response: existing.response as CreditWalletResult['response'],
+          response: existing.response as WalletTransactionResult['response'],
         };
       }
 
@@ -81,7 +115,11 @@ export class MikroOrmWalletTransactionRepository
         entity.version,
       );
 
-      wallet.credit(amount);
+      if (type === 'CREDIT') {
+        wallet.credit(amount);
+      } else {
+        wallet.debit(amount);
+      }
 
       entity.balance = wallet.balance.toString();
       entity.version = wallet.version;
@@ -100,7 +138,7 @@ export class MikroOrmWalletTransactionRepository
       const ledgerEntry = tx.create(LedgerEntry, {
         walletId: wallet.id,
         transactionId,
-        type: 'CREDIT',
+        type,
         amount: amount.toString(),
         currency: amount.currency,
         balanceAfter: wallet.balance.toString(),

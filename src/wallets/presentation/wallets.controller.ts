@@ -15,6 +15,7 @@ import { GetWalletUseCase } from '../application/use-cases/get-wallet.use-case.j
 import { CreateWalletDto } from './dto/create-wallet.dto.js';
 import { CreditWalletUseCase } from '../application/use-cases/credit-wallet.use-case.js';
 import { CreditWalletDto } from './dto/credit-wallet.dto.js';
+import { DebitWalletUseCase } from '../application/use-cases/debit-wallet.use-case.js';
 
 @Controller('wallets')
 export class WalletsController {
@@ -22,6 +23,7 @@ export class WalletsController {
     private readonly createWalletUseCase: CreateWalletUseCase,
     private readonly getWalletUseCase: GetWalletUseCase,
     private readonly creditWalletUseCase: CreditWalletUseCase,
+    private readonly debitWalletUseCase: DebitWalletUseCase,
   ) {}
 
   @Post()
@@ -46,13 +48,13 @@ export class WalletsController {
     return this.getWalletUseCase.execute(id);
   }
 
-  @Post(':id/credits')
-  async credit(
+  @Post(':id/debits')
+  async debit(
     @Param('id') id: string,
     @Body() dto: CreditWalletDto,
     @Headers('idempotency-key') idempotencyKey: string,
   ) {
-    return this.creditWalletUseCase.execute(
+    return this.debitWalletUseCase.execute(
       id,
       dto.amount,
       dto.currency,

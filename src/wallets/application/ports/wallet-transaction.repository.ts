@@ -1,7 +1,7 @@
 
 import { Money } from '../../../shared/domain/value-objects/money.js';
 
-export interface CreditWalletResult {
+export interface WalletTransactionResult {
   status: 'not_found' | 'completed';
   replayed?: boolean;
   response?: {
@@ -22,5 +22,13 @@ export interface WalletTransactionRepository {
     transactionId: string,
     idempotencyKey: string,
     requestHash: string,
-  ): Promise<CreditWalletResult>;
+  ): Promise<WalletTransactionResult>;
+
+  debit(
+    walletId: string,
+    amount: Money,
+    transactionId: string,
+    idempotencyKey: string,
+    requestHash: string,
+  ): Promise<WalletTransactionResult>;
 }
