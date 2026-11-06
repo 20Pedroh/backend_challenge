@@ -10,6 +10,7 @@ import { Wallet } from './wallets/entities/wallet.entity.js';
 import { LedgerEntry } from './wallets/entities/ledger-entry.entity.js';
 import { WalletsModule } from './wallets/wallets.module.js';
 import { IdempotencyRecord } from './wallets/entities/idempotency-record.entity.js';
+import { FinancialTransaction } from './wallets/entities/financial-transaction.entity.js';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { IdempotencyRecord } from './wallets/entities/idempotency-record.entity.
       user: process.env.DATABASE_USER ?? 'financial_user',
       password: process.env.DATABASE_PASSWORD ?? 'financial_password',
 
-      entities: [Wallet, LedgerEntry, IdempotencyRecord],
+      entities: [Wallet, LedgerEntry, IdempotencyRecord, FinancialTransaction],
 
       extensions: [Migrator],
 

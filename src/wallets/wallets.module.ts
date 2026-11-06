@@ -1,19 +1,27 @@
 
 import { Module } from '@nestjs/common';
 import { MikroOrmModule } from '@mikro-orm/nestjs';
-
 import { Wallet as WalletEntity } from './entities/wallet.entity.js';
 import { LedgerEntry } from './entities/ledger-entry.entity.js';
+import { IdempotencyRecord } from './entities/idempotency-record.entity.js';
+import { FinancialTransaction } from './entities/financial-transaction.entity.js';
 import { MikroOrmWalletRepository } from './infrastructure/persistence/mikro-orm-wallet.repository.js';
+import { MikroOrmWalletTransactionRepository } from './infrastructure/persistence/mikro-orm-wallet-transaction.repository.js';
 import { CreateWalletUseCase } from './application/use-cases/create-wallet.use-case.js';
 import { GetWalletUseCase } from './application/use-cases/get-wallet.use-case.js';
-import { WalletsController } from './presentation/wallets.controller.js';
 import { CreditWalletUseCase } from './application/use-cases/credit-wallet.use-case.js';
-import { MikroOrmWalletTransactionRepository } from './infrastructure/persistence/mikro-orm-wallet-transaction.repository.js';
 import { DebitWalletUseCase } from './application/use-cases/debit-wallet.use-case.js';
+import { WalletsController } from './presentation/wallets.controller.js';
 
 @Module({
-  imports: [MikroOrmModule.forFeature([WalletEntity, LedgerEntry])],
+  imports: [
+    MikroOrmModule.forFeature([
+      WalletEntity,
+      LedgerEntry,
+      IdempotencyRecord,
+      FinancialTransaction,
+    ]),
+  ],
   controllers: [WalletsController],
   providers: [
     MikroOrmWalletRepository,
