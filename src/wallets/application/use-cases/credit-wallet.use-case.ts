@@ -1,11 +1,13 @@
 
 import {
   BadRequestException,
+  ConflictException,
+  HttpException,
   Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 
 import { Money } from '../../../shared/domain/value-objects/money.js';
 import type { WalletTransactionRepository } from '../ports/wallet-transaction.repository.js';
@@ -21,7 +23,14 @@ export class CreditWalletUseCase {
     walletId: string,
     amount: string,
     currency: string,
+    idempotencyKey: string,
   ) {
+    if (!idempotencyKey?.trim() || idempotencyKey.length > 255) {
+      throw new BadRequestException(
+        'A valid Idempotency-Key header is required',
+      );
+    }
+
     let money: Money;
 
     try {
@@ -30,33 +39,26 @@ export class CreditWalletUseCase {
       throw new BadRequestException('Invalid monetary amount or currency');
     }
 
-    const transactionId = randomUUID();
+    const requestHash = createHash('sha256')
+      .update(JSON.stringify({ walletId, amount, currency }))
+      .digest('hex');
 
     try {
-      const wallet = await this.transactionRepository.credit(
+      const result = await this.transactionRepository.credit(
         walletId,
         money,
-        transactionId,
+        randomUUID(),
+        idempotencyKey,
+        requestHash,
       );
 
-      if (!wallet) {
+      if (result.status === 'not_found') {
         throw new NotFoundException('Wallet not found');
       }
 
-      return {
-        transactionId,
-        walletId: wallet.id,
-        playerId: wallet.playerId,
-        currency: wallet.balance.currency,
-        amount: money.toString(),
-        balance: wallet.balance.toString(),
-        version: wallet.version,
-      };
+      return result.response;
     } catch (error) {
-      if (
-        error instanceof NotFoundException ||
-        error instanceof BadRequestException
-      ) {
+      if (error instanceof HttpException) {
         throw error;
       }
 

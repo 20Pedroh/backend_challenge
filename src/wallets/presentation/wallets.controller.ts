@@ -1,11 +1,12 @@
-
 import {
-  Get,
-  Param,
   Body,
   Controller,
+  Get,
+  Headers,
+  Param,
   HttpCode,
   HttpStatus,
+  Inject,
   Post,
 } from '@nestjs/common';
 
@@ -49,11 +50,13 @@ export class WalletsController {
   async credit(
     @Param('id') id: string,
     @Body() dto: CreditWalletDto,
+    @Headers('idempotency-key') idempotencyKey: string,
   ) {
     return this.creditWalletUseCase.execute(
       id,
       dto.amount,
       dto.currency,
+      idempotencyKey,
     );
   }
 }

@@ -1,10 +1,26 @@
+
 import { Money } from '../../../shared/domain/value-objects/money.js';
-import { Wallet } from '../../domain/wallet.js';
+
+export interface CreditWalletResult {
+  status: 'not_found' | 'completed';
+  replayed?: boolean;
+  response?: {
+    transactionId: string;
+    walletId: string;
+    playerId: string;
+    currency: string;
+    amount: string;
+    balance: string;
+    version: number;
+  };
+}
 
 export interface WalletTransactionRepository {
   credit(
     walletId: string,
     amount: Money,
     transactionId: string,
-  ): Promise<Wallet | null>;
+    idempotencyKey: string,
+    requestHash: string,
+  ): Promise<CreditWalletResult>;
 }

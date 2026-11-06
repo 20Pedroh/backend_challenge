@@ -9,6 +9,7 @@ import { AppService } from './app.service.js';
 import { Wallet } from './wallets/entities/wallet.entity.js';
 import { LedgerEntry } from './wallets/entities/ledger-entry.entity.js';
 import { WalletsModule } from './wallets/wallets.module.js';
+import { IdempotencyRecord } from './wallets/entities/idempotency-record.entity.js';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { WalletsModule } from './wallets/wallets.module.js';
       user: process.env.DATABASE_USER ?? 'financial_user',
       password: process.env.DATABASE_PASSWORD ?? 'financial_password',
 
-      entities: [Wallet, LedgerEntry],
+      entities: [Wallet, LedgerEntry, IdempotencyRecord],
 
       extensions: [Migrator],
 
