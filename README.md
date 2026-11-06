@@ -2,113 +2,210 @@
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# Backend Challenge — Test Documentation
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 1. Overview
 
-## Description
+This document records the tests and validations performed during the development of the financial wallet API.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+The main objective is to ensure financial integrity, transaction safety, idempotency, and reliable data persistence.
 
-## Project setup
+## 2. Technology Stack
 
-```bash
-$ bun install
-```
+- **Runtime:** Bun
+- **Language:** TypeScript
+- **Framework:** NestJS 12
+- **Database:** PostgreSQL 17
+- **ORM:** MikroORM
+- **Monetary precision:** Decimal.js
+- **Automated testing:** Bun Test
+- **Infrastructure:** Docker Compose
 
-## Compile and run the project
+## 3. Automated Tests
 
-```bash
-# development
-$ bun run start
+### 3.1. Unit Tests
 
-# watch mode
-$ bun run start:dev
+**Money Value Object**
 
-# production mode
-$ bun run start:prod
-```
+Automated tests have been implemented for the `Money` value object, covering:
 
-## Run tests
+- Monetary value creation.
+- Decimal precision.
+- Addition and subtraction.
+- Monetary value comparisons.
+- Currency compatibility.
+- Validation of negative values and invalid formats.
+
+**Result:** 10 tests passed.
+
+### 3.2. Application Tests
+
+The default NestJS application controller test was executed successfully.
+
+Command:
 
 ```bash
-# unit tests
-$ bun run test
-
-# e2e tests
-$ bun run test:e2e
-
-# test coverage
-$ bun run test:cov
+bun test
 ```
 
-## Deployment
+The test verifies that the application controller responds correctly to a request sent to the root endpoint.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**Result:** Passed.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3.3. End-to-End Tests
+
+Command:
 
 ```bash
-$ bun install -g @nestjs/mau
-$ mau deploy
+bun run test:e2e
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+The existing E2E test verifies that the application responds correctly to an HTTP GET request on the `/` endpoint.
 
-## Observability
+**Result:** Passed.
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+> Note: Current E2E coverage is limited to the root endpoint. Additional coverage is still required for wallet operations and financial endpoints.
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+## 4. Build and Runtime Validation
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+The following commands were executed successfully:
 
-## Resources
+### Build
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+bun run build
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observer](https://observer.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Validates TypeScript compilation and generates the production build.
 
-## Support
+### Production Runtime
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+bun run start:prod
+```
 
-## Stay in touch
+Validates that the compiled application starts using the Bun runtime.
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Lint
 
-## License
+```bash
+bun run lint
+```
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Runs Oxlint against the source code and test directories.
+
+## 5. Database Validation
+
+PostgreSQL 17 was started using Docker Compose.
+
+The container health check confirmed that the database was ready to accept connections.
+
+The following database structures have been created:
+
+- `wallets`: stores wallet information.
+- `ledger_entries`: stores financial movement records.
+- `idempotency_records`: stores idempotency keys and original responses.
+- `financial_transactions`: stores financial transactions and their references.
+
+Constraints and indexes were also added to strengthen data integrity, including:
+
+- Wallet uniqueness per player and currency.
+- Idempotency key uniqueness.
+- Transaction ID uniqueness in the ledger.
+- Indexes for wallet and transaction reference queries.
+
+## 6. Manual API Tests
+
+HTTP requests were performed to validate credit and debit operations.
+
+### 6.1. Wallet Creation
+
+A wallet was successfully created for a player using BRL as its currency.
+
+**Result:** Passed.
+
+### 6.2. Credit Operation
+
+An initial credit of R$ 100.00 was performed, followed by another credit of R$ 25.00.
+
+**Result:** The wallet balance was correctly updated to R$ 125.00.
+
+### 6.3. Concurrency
+
+Ten simultaneous credit operations were executed, each using a different idempotency key.
+
+**Result:** All operations were processed successfully, with no lost updates. The final balance was R$ 135.00.
+
+### 6.4. Concurrent Idempotency
+
+Ten simultaneous requests were sent using the same idempotency key and identical payload.
+
+**Result:** The operation was applied only once, preventing duplicate credits.
+
+### 6.5. Debit Operation
+
+A debit of R$ 20.00 was successfully performed.
+
+**Result:** The wallet balance was correctly updated to R$ 125.00.
+
+### 6.6. Insufficient Balance Protection
+
+A debit of R$ 200.00 was attempted while the available balance was lower.
+
+**Result:** The API returned HTTP 400 (Bad Request), preserving the wallet balance and version.
+
+### 6.7. Debit Replay
+
+A debit operation of R$ 5.00 was performed. The same request was subsequently submitted again using the same idempotency key.
+
+**Result:** The original response was reused without generating a second financial movement.
+
+### 6.8. Ledger Integrity
+
+A direct PostgreSQL query was performed to verify the ledger entry associated with the previous debit operation.
+
+**Result:** Only one corresponding ledger entry was found.
+
+## 7. Pending Features and Tests
+
+The following items still require implementation or specific validation:
+
+- Automated tests for wallet creation, credit, and debit operations.
+- Concurrency tests involving simultaneous credit and debit operations.
+- Idempotency tests using different payloads with the same key.
+- Processing of BET, WIN, LOSS, REFUND, and ROLLBACK events.
+- Handling of out-of-order transaction references.
+- Guaranteeing that each transaction can only be reversed once.
+- Inbox and Outbox implementation and testing.
+- Message broker integration and ACK validation only after database commit.
+- Failure handling, retries, and processing recovery tests.
+- Consistency tests across wallets, transactions, and ledger entries.
+- Multi-instance application execution tests.
+- Metrics and observability implementation and validation.
+
+## 8. Running the Tests
+
+Run the following commands from the project root directory.
+
+```bash
+# Run automated tests
+bun test
+
+# Run End-to-End tests
+bun run test:e2e
+
+# Generate production build
+bun run build
+
+# Start the production application
+bun run start:prod
+
+# Run lint
+bun run lint
+```
+
+## 9. Final Notes
+
+So far, the fundamentals of monetary precision, PostgreSQL persistence, credit and debit operations, concurrency, and idempotency have been validated.
+
+The next development steps focus on financial event processing, message broker integration, recovery mechanisms, and expanding automated test coverage.
