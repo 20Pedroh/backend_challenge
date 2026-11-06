@@ -5,9 +5,14 @@ import {
   PrimaryKey,
   Property,
   Index,
+  Unique,
 } from '@mikro-orm/decorators/legacy';
 
 @Entity({ tableName: 'ledger_entries' })
+@Unique({
+  name: 'ledger_transaction_id_unique',
+  properties: ['transactionId'],
+})
 @Index({
   name: 'ledger_wallet_created_at_idx',
   properties: ['walletId', 'createdAt'],

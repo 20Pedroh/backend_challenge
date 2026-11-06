@@ -48,6 +48,21 @@ export class WalletsController {
     return this.getWalletUseCase.execute(id);
   }
 
+  
+  @Post(':id/credits')
+  async credit(
+    @Param('id') id: string,
+    @Body() dto: CreditWalletDto,
+    @Headers('idempotency-key') idempotencyKey: string,
+  ) {
+    return this.creditWalletUseCase.execute(
+      id,
+      dto.amount,
+      dto.currency,
+      idempotencyKey,
+    );
+  }
+
   @Post(':id/debits')
   async debit(
     @Param('id') id: string,
