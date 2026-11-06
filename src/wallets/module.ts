@@ -8,6 +8,7 @@ import { CreateWalletUseCase } from './application/use-cases/create-wallet.use-c
 import { GetWalletUseCase } from './application/use-cases/get-wallet.use-case.js';
 import { WalletsController } from './presentation/wallets.controller.js';
 import { CreditWalletUseCase } from './application/use-cases/credit-wallet.use-case.js';
+import { DebitWalletUseCase } from './application/use-cases/debit-wallet.use-case.js';
 import { MikroOrmWalletTransactionRepository } from './infrastructure/persistence/mikro-orm-wallet-transaction.repository.js';
 
 @Module({
@@ -19,6 +20,7 @@ import { MikroOrmWalletTransactionRepository } from './infrastructure/persistenc
     CreateWalletUseCase,
     GetWalletUseCase,
     CreditWalletUseCase,
+    DebitWalletUseCase,
     {
       provide: 'WalletRepository',
       useExisting: MikroOrmWalletRepository,
@@ -33,6 +35,7 @@ import { MikroOrmWalletTransactionRepository } from './infrastructure/persistenc
     'WalletTransactionRepository',
     GetWalletUseCase,
     CreditWalletUseCase,
+    DebitWalletUseCase,
   ],
 })
 export class WalletsModule {}

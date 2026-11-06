@@ -36,6 +36,7 @@ import { DebitWalletUseCase } from './application/use-cases/debit-wallet.use-cas
     'WalletTransactionRepository',
     GetWalletUseCase,
     CreditWalletUseCase,
+    DebitWalletUseCase,
   ],
 })
 export class WalletsModule {}

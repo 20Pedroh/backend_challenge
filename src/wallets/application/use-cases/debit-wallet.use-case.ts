@@ -2,6 +2,7 @@
 import {
   BadRequestException,
   HttpException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import type { WalletTransactionRepository } from '../ports/wallet-transaction.re
 @Injectable()
 export class DebitWalletUseCase {
   constructor(
+    @Inject('WalletTransactionRepository')
     private readonly transactionRepository: WalletTransactionRepository,
   ) {}
 
