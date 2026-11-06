@@ -1,6 +1,6 @@
 
 import { randomUUID } from 'node:crypto';
-import { Inject, Injectable } from '@nestjs/common';
+import {ConflictException,Inject,Injectable,} from '@nestjs/common';
 import { Wallet } from '../../domain/wallet.js';
 import type { WalletRepository } from '../ports/wallet.repository.js';
 
@@ -23,7 +23,7 @@ export class CreateWalletUseCase {
 
     // erro para impedir a criaçao de uma carteira duplicada para o mesmo jogador
     if (existingWallet) {
-      throw new Error('Wallet already exists for this player and currency');
+      throw new ConflictException('Wallet already exists for this player and currency');
     }
 
     const wallet = Wallet.create(
